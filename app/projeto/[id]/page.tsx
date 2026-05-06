@@ -111,7 +111,8 @@ const ProjetoPage = () => {
     );
   };
 
-  const bannerImage = projectBannersData[parseInt(id as any)] || carrossel1 || `https://dev.nobisapp.com.br/institute/uploads/${project?.bannerImage}`;
+  const bannerImage = projectBannersData[parseInt(id as any)] || carrossel1;
+  const bannerImageUrl = bannerImage?.src || `https://dev.nobisapp.com.br/institute/uploads/${project?.bannerImage}`;
 
   useEffect(() => {
       if (typeof window === "undefined") return;
@@ -206,7 +207,7 @@ const ProjetoPage = () => {
         <>
           <img
             className="projetoBanner"
-            src={bannerImage.src}
+            src={bannerImageUrl}
             alt="Projeto Banner"
             style={{
               position: 'absolute',
@@ -266,7 +267,7 @@ const ProjetoPage = () => {
                     </div>
                   </div>
                 </div>
-                <img src={projectImagesData[project.id].src} className="projectImg" />
+                <img src={projectImagesData[project.id]?.src || projectBG.src} className="projectImg" />
               </div>
             </div>
           </div>
