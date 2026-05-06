@@ -268,7 +268,7 @@ const ProjetoPage = () => {
                     </div>
                   </div>
                 </div>
-                <img src={projectImagesData[project.id]?.src || projectBG.src} className="projectImg" />
+                <img src={project?.bannerImage ? `https://dev.nobisapp.com.br/institute/uploads/${project.bannerImage}` : projectImagesData[project.id]?.src || projectBG.src} className="projectImg" />
               </div>
             </div>
           </div>
