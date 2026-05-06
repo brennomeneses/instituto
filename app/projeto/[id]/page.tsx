@@ -234,6 +234,7 @@ const ProjetoPage = () => {
           </div>
         </>
       )}
+    </div>
 
       {project && (
         <>
@@ -308,7 +309,6 @@ const ProjetoPage = () => {
           </FadeInSection>
         </>
       )}
-    </div>
       <div className="footer">
           <div className="content">
             <div className="footerContent">
