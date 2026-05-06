@@ -33,6 +33,7 @@ import empreendedorismo from '../../img/empreendedorismo.jpg'
 import projectBG from '../../img/projectBG.png'
 import { LoadingOutlined } from '@ant-design/icons';
 import { motion } from "framer-motion";
+import { SingleProjectResponse } from "@/app/@types/http/singleProjectResponse";
 import DonationModal from "../../components/donationModal";
 
 const ProjetoPage = () => {
@@ -110,7 +111,7 @@ const ProjetoPage = () => {
     );
   };
 
-  const bannerImage = projectBannersData[parseInt(id as any)] || carrossel1;
+  const bannerImage = projectBannersData[parseInt(id as any)] || carrossel1 || `https://dev.nobisapp.com.br/institute/uploads/${project?.bannerImage}`;
 
   useEffect(() => {
       if (typeof window === "undefined") return;
@@ -149,7 +150,7 @@ const ProjetoPage = () => {
         });
         if (!response.ok) throw new Error("Erro ao buscar projeto");
 
-        const data = await response.json();
+        const data : SingleProjectResponse = await response.json();
         setProject(data.project);
       } catch (error) {
         console.error("Erro ao buscar projeto:", error);
@@ -201,34 +202,37 @@ const ProjetoPage = () => {
     </header>
 
     <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }} id="section1">
-      <img 
-        className="projetoBanner" 
-        src={bannerImage.src} 
-        alt="Projeto Banner"
-        style={{ 
-          position: 'absolute', 
-          top: 0, 
-          left: 0, 
-          width: '100vw', 
-          height: '100vh', 
-          objectFit: 'cover',
-          zIndex: 0 
-        }} 
-      />
-        {/* Conteúdo sobreposto */}
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%', color: '#fff', width: "80%", margin: "0 auto", padding: "0 20px" }}>
-          <p className="projectTitle">
-            INSTITUTO NOBIS <br />
-            <a style={{ fontWeight: '300', fontSize: "68px" }}>& CROWDFUNDING</a> <br />
-            IMPACTO DE A-Z <br />
-          </p>
-          <div style={{ marginTop: "-50px" }} className="projectTags">
-            {project?.tags?.map((tag: any) => (
-              <button key={tag.id} className="initBtn">{tag.content}</button>
-            ))}
+      {project?.bannerImage && (
+        <>
+          <img
+            className="projetoBanner"
+            src={bannerImage.src}
+            alt="Projeto Banner"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              objectFit: 'cover',
+              zIndex: 0
+            }}
+          />
+          {/* Conteúdo sobreposto */}
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%', color: '#fff', width: "80%", margin: "0 auto", padding: "0 20px" }}>
+            <p className="projectTitle">
+              INSTITUTO NOBIS <br />
+              <a style={{ fontWeight: '300', fontSize: "68px" }}>& CROWDFUNDING</a> <br />
+              IMPACTO DE A-Z <br />
+            </p>
+            <div style={{ marginTop: "-50px" }}>
+              {project?.tags?.map((tag: any) => (
+                <button key={tag.id} className="initBtn">{tag.content}</button>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {project && (
         <>
@@ -303,6 +307,7 @@ const ProjetoPage = () => {
           </FadeInSection>
         </>
       )}
+    </div>
       <div className="footer">
           <div className="content">
             <div className="footerContent">
