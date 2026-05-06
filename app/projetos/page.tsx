@@ -40,13 +40,13 @@ const HomePage = () => {
     fetch('https://dev.nobisapp.com.br/institute/', options)
       .then(response => response.json())
       .then(data => {
-        const formattedData = data.map((item: { projectData: {
-          bannerImage: any; id: any; title: any; description: any; tags: any[]; 
-}; }, index: number) => ({
+        const formattedData = data.map((item: { projectData: { id: any; title: any; description: any; tags: any[]; bannerImage?: string; }; }, index: number) => ({
           id: item.projectData.id,
           title: item.projectData.title,
           description: item.projectData.description,
-          img: item.projectData.bannerImage ? `https://dev.nobisapp.com.br/institute/uploads/${item.projectData.bannerImage}` : projectImages[index % projectImages.length],
+          img: item.projectData.bannerImage 
+            ? `https://dev.nobisapp.com.br/institute/uploads/${item.projectData.bannerImage}`
+            : projectImages[index % projectImages.length],
           tags: item.projectData.tags.map(tag => tag.content),
         }));
         setCardData(formattedData);
@@ -159,7 +159,7 @@ const HomePage = () => {
               <div className="cardsProjetos">
                 {filteredData.map((project, index) => (
                   <div key={index} className="card" style={{ width: "400px", height: "600px" }}>
-                    <img src={project.img.src} alt={project.title} className="card-img" />
+                    <img src={typeof project.img === 'string' ? project.img : project.img.src} alt={project.title} className="card-img" />
                     <div className="card-overlay">
                       <div className="overlay-content">
                         <h3>{project.title}</h3>
