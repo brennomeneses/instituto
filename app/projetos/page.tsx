@@ -160,6 +160,7 @@ const HomePage = () => {
                 {filteredData.map((project, index) => (
                   <div key={index} className="card" style={{ width: "400px", height: "600px" }}>
                     <img src={typeof project.img === 'string' ? project.img : project.img.src} alt={project.title} className="card-img" />
+                    <h3 className="card-title">{project.title}</h3>
                     <div className="card-overlay">
                       <div className="overlay-content">
                         <h3>{project.title}</h3>

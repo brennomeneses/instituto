@@ -240,10 +240,28 @@ body {
   object-fit: cover;
 }
 
+.card-title {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  padding: 80px 20px 24px;
+  color: white;
+  font-family: "Poppins";
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
 .card-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
+  z-index: 2;
   height: 100%;
   width: 100%;
   padding: 20px;
@@ -257,6 +275,11 @@ body {
 .card:hover .card-overlay {
   opacity: 1; /* Torna o overlay visível quando o card é hovered */
   visibility: visible; /* Torna o overlay visível quando o card é hovered */
+}
+
+.card:hover .card-title {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .overlay-content {
@@ -286,7 +309,7 @@ body {
 }
 
 .card-btn {
-  padding: 2% 0;
+  padding: 1.5% 0;
   margin: 10px 0 20px;
   border: none;
   background: none;
@@ -295,7 +318,7 @@ body {
   color: white;
   cursor: pointer;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Poppins";
   letter-spacing: 1.1px;
   width: 60%;
@@ -1114,5 +1137,562 @@ body {
   .documentContent h2, p {
     font-size: 18px !important;
 
+  }
+}
+
+@media screen and (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .content {
+    width: min(90%, 430px);
+  }
+
+  .floating-header,
+  .floating-header.solid,
+  .floating-header.solidWhite {
+    width: 100%;
+    margin: 0;
+    padding: 10px 16px;
+    background-color: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .floating-header.transparent {
+    background-color: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(8px);
+  }
+
+  .container-header {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .logo-header {
+    display: none;
+  }
+
+  .navInfo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  .floating-header nav {
+    flex: 1;
+  }
+
+  .floating-header nav ul {
+    margin: 0 !important;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .floating-header nav ul li {
+    margin-left: 0 !important;
+  }
+
+  .floating-header nav ul li a {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .floating-header.solidWhite nav ul li a,
+  .floating-header.solidWhite .navInfo a {
+    color: #323131 !important;
+  }
+
+  .button-header {
+    margin-left: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .frontPageTitle,
+  .projectTitle {
+    font-size: clamp(32px, 11vw, 46px) !important;
+    line-height: 1.08;
+    margin: 0 0 18px;
+  }
+
+  .frontPageTitle a,
+  .projectTitle a {
+    font-size: clamp(24px, 8vw, 34px) !important;
+  }
+
+  .projectTitle + div {
+    margin-top: 0 !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .initBtn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .title {
+    padding-top: 48px;
+  }
+
+  .title p {
+    font-size: 15px !important;
+    line-height: 1.4;
+  }
+
+  .title p a {
+    display: none;
+  }
+
+  .title h1 {
+    font-size: clamp(28px, 8vw, 34px);
+    line-height: 1.12;
+    letter-spacing: -1px;
+  }
+
+  .nossosProjetos,
+  .sobreNobis,
+  .playlist,
+  .mvv,
+  .sobre,
+  .equipe,
+  .projectInfo,
+  .sobreProjeto,
+  .meta,
+  .projects,
+  .projects-cards,
+  .transparenciaDocumentos,
+  .footer {
+    height: auto;
+    min-height: 0;
+  }
+
+  .nossosProjetos,
+  .sobreNobis,
+  .playlist,
+  .mvv,
+  .sobre,
+  .equipe,
+  .projectInfo,
+  .sobreProjeto,
+  .meta {
+    padding: 0 0 56px;
+  }
+
+  .slider-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 24px 0 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .slider-container .slider-container {
+    flex-direction: row;
+  }
+
+  .card {
+    flex: 0 0 82vw;
+    width: 82vw !important;
+    max-width: 360px;
+    height: 420px !important;
+    margin: 0;
+    border-radius: 14px;
+    scroll-snap-align: center;
+  }
+
+  .card-title {
+    padding: 96px 18px 22px;
+    font-size: 20px;
+  }
+
+  .card-overlay {
+    padding: 18px;
+  }
+
+  .card-overlay h3 {
+    font-size: 18px;
+  }
+
+  .card-overlay p {
+    height: auto;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 14px !important;
+    line-height: 1.45;
+  }
+
+  .card-btn {
+    width: fit-content;
+    min-width: 128px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .sobreNosCards {
+    margin-top: 24px;
+  }
+
+  .sobreNosCards img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .parceiros {
+    height: 76px;
+  }
+
+  .parceiros img {
+    height: 36px;
+    width: auto;
+  }
+
+  .playlistContainer {
+    margin-top: 24px;
+  }
+
+  .playlistContainer iframe {
+    height: 240px !important;
+    border-radius: 18px !important;
+  }
+
+  .mvvContainer {
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 28px;
+  }
+
+  .mvvCard,
+  .meio {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 28px 22px;
+    border-radius: 24px;
+  }
+
+  .mvvCard:hover {
+    transform: none;
+  }
+
+  .mvvCard h1 {
+    margin-bottom: 16px !important;
+    font-size: 24px;
+  }
+
+  .mvvCard span {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .mvvCard img {
+    width: 96px;
+    margin-bottom: 18px;
+  }
+
+  .sobre {
+    padding: 0 0 56px;
+  }
+
+  .sectionContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .text {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .text span,
+  .description span,
+  .equipe .text span {
+    font-size: 15px;
+    line-height: 1.65;
+    text-align: left !important;
+  }
+
+  .data {
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .dataItem {
+    flex: 1;
+  }
+
+  .dataItem h1 {
+    font-size: 24px;
+  }
+
+  .dataItem span {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .equipe {
+    padding: 0 0 56px;
+  }
+
+  .equipe .sectionContent {
+    flex-direction: column;
+  }
+
+  .equipe .carousel {
+    width: 100% !important;
+    margin: 22px 0 0;
+  }
+
+  .equipe .carousel > div {
+    margin-top: 0 !important;
+    max-width: 320px !important;
+  }
+
+  .equipe .carousel img {
+    display: block;
+  }
+
+  .projects {
+    padding: 76px 0 32px;
+  }
+
+  .filterTags {
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 0;
+    padding: 14px 5%;
+    overflow-x: auto;
+    font-size: 13px;
+    scrollbar-width: none;
+  }
+
+  .filterTags::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tag {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 7px 13px;
+    white-space: nowrap;
+  }
+
+  .projects-cards {
+    padding: 28px 0 56px;
+  }
+
+  .cardsProjetos {
+    width: 100%;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .cardsProjetos .card {
+    width: 100% !important;
+    max-width: 360px;
+    height: 430px !important;
+  }
+
+  .projectInfo {
+    padding-top: 0;
+  }
+
+  .projectInfo .sectionContent {
+    flex-direction: column;
+  }
+
+  .projectInfo .sectionContent img.projectImg {
+    display: block;
+  }
+
+  .projectImg {
+    width: 100%;
+    height: 230px;
+    border-radius: 18px;
+  }
+
+  .ods {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .ods-item img,
+  .ods img {
+    display: block;
+    width: 54px;
+    height: 54px;
+  }
+
+  .projetoSectionTitle {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+
+  .projetoInfo {
+    height: auto;
+    min-height: 0;
+    flex-direction: column;
+    gap: 26px;
+    padding: 28px 20px;
+    border-radius: 24px;
+    margin-top: 20px;
+  }
+
+  .projetoInfo a {
+    font-size: 20px;
+  }
+
+  .projetoInfo span {
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .metaInfo span {
+    font-size: 22px !important;
+  }
+
+  .btnDoacao {
+    width: 100%;
+    max-width: 260px;
+    font-size: 16px;
+  }
+
+  .transparenciaDocumentos {
+    padding: 28px 0 56px;
+  }
+
+  .documentos {
+    flex-direction: column;
+    gap: 16px;
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .documentos > a,
+  .documentos .ant-popover-open {
+    width: 100%;
+  }
+
+  .documentCard {
+    width: 100%;
+    height: auto;
+    min-height: 118px;
+    padding: 18px;
+  }
+
+  .documentContent {
+    width: 100%;
+    padding-left: 0;
+    justify-content: flex-start;
+  }
+
+  .downloadIcon {
+    flex: 0 0 50px;
+    width: 50px;
+    height: 50px;
+    margin-right: 16px;
+    font-size: 48px;
+  }
+
+  .documentCard h2 {
+    margin-top: 0;
+    font-size: 20px;
+    letter-spacing: -0.8px;
+  }
+
+  .documentCard p {
+    font-size: 16px !important;
+    letter-spacing: 0;
+  }
+
+  .footer {
+    padding: 36px 0;
+  }
+
+  .footerContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .footerContent img {
+    height: 78px;
+    margin-bottom: 0;
+  }
+
+  .footerInfo {
+    width: 100%;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .footerInfo div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .footerInfo h4 {
+    font-size: 16px !important;
+  }
+
+  .footerInfo a,
+  .footerInfo p {
+    font-size: 14px !important;
+  }
+
+  .whatsapp-button {
+    display: inline-flex;
+    width: auto;
+    padding: 9px 18px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .navInfo {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .floating-header nav ul {
+    gap: 10px;
+  }
+
+  .floating-header nav ul li a {
+    font-size: 12px;
+  }
+
+  .button-header {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .card {
+    flex-basis: 86vw;
+    width: 86vw !important;
+    height: 390px !important;
+  }
+
+  .cardsProjetos .card {
+    height: 400px !important;
+  }
+
+  .playlistContainer iframe {
+    height: 210px !important;
   }
 }

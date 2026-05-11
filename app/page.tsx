@@ -171,6 +171,7 @@ export default function HomePage() {
               {cardData.map((card, index) => (
                 <div key={index} className="card" style={{ width: "400px", height: "600px" }}>
                   <img src={typeof card.img === 'string' ? card.img : card.img.src} alt={card.title} className="card-img" />
+                  <h3 className="card-title">{card.title}</h3>
                   <div className="card-overlay">
                     <div className="overlay-content">
                       <h3>{card.title}</h3>
