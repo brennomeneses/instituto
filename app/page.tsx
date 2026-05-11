@@ -13,7 +13,6 @@ import imgFooter from '../app/img/logos/nobis_roxo.png';
 import afroempreendedorismo from '../app/img/3.png'
 import etnodesenvolvimento from '../app/img/etnodesenvolvimento.jpg'
 import empreendedorismo from '../app/img/empreendedorismo.jpg'
-import techgirls from '../app/img/techgirls.jpg'
 import sobreNos from '../app/img/sobre.png';
 import parceiros from '../app/img/parceiros.png';
 import missaoD from '../app/img/missaoDim.png';
@@ -51,7 +50,7 @@ const FadeInSection = ({ children }: { children: React.ReactNode }) => {
 
 export default function HomePage() {
   const [cardData, setCardData] = useState<any[]>([]);
-  const projectImages = [empreendedorismo, etnodesenvolvimento, afroempreendedorismo, techgirls];
+  const projectImages = [empreendedorismo, etnodesenvolvimento, afroempreendedorismo];
   const [active, setActive] = useState("visao");
 
   const titleColors = {
@@ -91,11 +90,13 @@ export default function HomePage() {
     fetch('https://dev.nobisapp.com.br/institute/', options)
       .then(response => response.json())
       .then(data => {
-        const formattedData = data.map((item: { projectData: { id: any; title: any; description: any; }; }, index: number) => ({
+        const formattedData = data.map((item: { projectData: { id: any; title: any; description: any; bannerImage?: string; }; }, index: number) => ({
           id: item.projectData.id,
           title: item.projectData.title,
           description: item.projectData.description,
-          img: projectImages[index % projectImages.length]
+          img: item.projectData.bannerImage
+            ? `https://dev.nobisapp.com.br/institute/uploads/${item.projectData.bannerImage}`
+            : projectImages[index % projectImages.length]
         }));
         setCardData(formattedData);
       })
@@ -169,7 +170,7 @@ export default function HomePage() {
           <div className="slider-container">
               {cardData.map((card, index) => (
                 <div key={index} className="card" style={{ width: "400px", height: "600px" }}>
-                  <img src={card.img.src} alt={card.title} className="card-img" />
+                  <img src={typeof card.img === 'string' ? card.img : card.img.src} alt={card.title} className="card-img" />
                   <div className="card-overlay">
                     <div className="overlay-content">
                       <h3>{card.title}</h3>
