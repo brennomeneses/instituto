@@ -492,6 +492,20 @@ body {
   color: #7a7099;
 }
 
+.description {
+  max-width: 760px;
+}
+
+.description span {
+  display: block;
+  color: #6f668d;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.68;
+  letter-spacing: 0;
+  text-align: left;
+}
+
 .data {
   margin-top: 5%;
   display: flex;
@@ -560,6 +574,17 @@ body {
   font-weight: 600;
 }
 
+.projectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: -50px;
+}
+
+.projectTags .initBtn {
+  margin: 0;
+}
+
 .projetoBanner {
   background-position: center;
   background-repeat: no-repeat;
@@ -606,6 +631,7 @@ body {
 
 .sobreProjeto {
   height: 90vh;
+  padding-top: 10%;
 }
 
 .projetoInfo {
@@ -617,22 +643,31 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  gap: 48px;
   margin-top: 5%;
   color: white;
   text-align: center;
   height: 480px;
 }
 
+.projetoInfo > div {
+  flex: 1;
+  max-width: 460px;
+}
+
 .projetoInfo a {
-  font-size: 28px;
+  display: inline-block;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 5%;
+  line-height: 1.2;
+  margin-bottom: 12px;
 }
 
 .projetoInfo span {
-  font-size: 25px;
+  font-size: 18px;
   font-weight: 400;
-  max-width: 400px;
+  line-height: 1.5;
+  max-width: 420px;
   display: block;
   text-align: center;
   margin: 0 auto;
@@ -1088,7 +1123,8 @@ body {
   }
 
   .projectTags {
-    margin-top: 0 !important;
+    margin-top: 0;
+    gap: 8px;
   }
 
   .projectInfo {
@@ -1154,14 +1190,21 @@ body {
   .floating-header.solidWhite {
     width: 100%;
     margin: 0;
-    padding: 10px 16px;
-    background-color: rgba(255, 255, 255, 0.94);
+    padding: 12px 18px;
+    border-radius: 0;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   }
 
   .floating-header.transparent {
-    background-color: rgba(0, 0, 0, 0.28);
+    background-color: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(8px);
+    border-radius: 0;
+  }
+
+  .floating-header.solid,
+  .floating-header.solidWhite {
+    background-color: rgba(0, 0, 0, 0.88);
+    border-radius: 0;
   }
 
   .container-header {
@@ -1178,8 +1221,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    font-size: 13px;
+    gap: 12px;
+    font-size: 14px;
   }
 
   .floating-header nav {
@@ -1192,7 +1235,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
   }
 
   .floating-header nav ul li {
@@ -1200,20 +1243,32 @@ body {
   }
 
   .floating-header nav ul li a {
-    font-size: 13px;
+    font-size: 14px;
     white-space: nowrap;
   }
 
+  .floating-header.transparent nav ul li a,
+  .floating-header.transparent .navInfo a {
+    color: #323131 !important;
+  }
+
+  .floating-header.solid nav ul li a,
+  .floating-header.solid .navInfo a,
   .floating-header.solidWhite nav ul li a,
   .floating-header.solidWhite .navInfo a {
-    color: #323131 !important;
+    color: white !important;
   }
 
   .button-header {
     margin-left: 0;
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 7px 14px;
+    font-size: 13px;
     white-space: nowrap;
+  }
+
+  .floating-header.solid .button-header,
+  .floating-header.solidWhite .button-header {
+    border-color: white !important;
   }
 
   .frontPageTitle,
@@ -1427,6 +1482,10 @@ body {
     text-align: left !important;
   }
 
+  .description {
+    max-width: 100%;
+  }
+
   .data {
     gap: 12px;
     align-items: flex-start;
@@ -1553,8 +1612,13 @@ body {
     margin-top: 20px;
   }
 
+  .projetoInfo > div {
+    max-width: 100%;
+  }
+
   .projetoInfo a {
     font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .projetoInfo span {
@@ -1665,21 +1729,21 @@ body {
 
 @media screen and (max-width: 420px) {
   .navInfo {
-    font-size: 12px;
-    gap: 8px;
-  }
-
-  .floating-header nav ul {
+    font-size: 13px;
     gap: 10px;
   }
 
+  .floating-header nav ul {
+    gap: 12px;
+  }
+
   .floating-header nav ul li a {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .button-header {
-    padding: 6px 10px;
-    font-size: 11px;
+    padding: 7px 12px;
+    font-size: 12px;
   }
 
   .card {

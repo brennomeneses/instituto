@@ -226,7 +226,7 @@ const ProjetoPage = () => {
               <a style={{ fontWeight: '300', fontSize: "68px" }}>& CROWDFUNDING</a> <br />
               IMPACTO DE A-Z <br />
             </p>
-            <div style={{ marginTop: "-50px" }}>
+            <div className="projectTags">
               {project?.tags?.map((tag: any) => (
                 <button key={tag.id} className="initBtn">{tag.content}</button>
               ))}
