@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Spin, Popover, Progress } from "antd";
 import Link from "next/link";
 import 'antd/dist/reset.css';
@@ -33,7 +33,7 @@ import empreendedorismo from '../../img/empreendedorismo.jpg'
 import projectBG from '../../img/projectBG.png'
 import { LoadingOutlined } from '@ant-design/icons';
 import { motion } from "framer-motion";
-import { SingleProjectResponse } from "@/app/@types/http/singleProjectResponse";
+import type { SingleProjectResponse } from "@/app/@types/http/singleProjectResponse";
 import DonationModal from "../../components/donationModal";
 
 const ProjetoPage = () => {
@@ -76,7 +76,7 @@ const ProjetoPage = () => {
     "4": carrossel2,
   }; 
 
-  const FadeInSection = ({ children }: { children: React.ReactNode }) => {
+  const FadeInSection = ({ children }: { children: ReactNode }) => {
       return (
         <motion.div
           initial={{ opacity: 0, y: 50 }} // Começa invisível e deslocado para baixo
@@ -111,22 +111,20 @@ const ProjetoPage = () => {
     );
   };
 
-  const bannerImage = projectBannersData[parseInt(id as any)] || carrossel1;
-  const bannerImageUrl = bannerImage?.src || `https://dev.nobisapp.com.br/institute/uploads/${project?.bannerImage}`;
+  const projectImageUrl = project?.bannerImage
+    ? `https://dev.nobisapp.com.br/institute/uploads/${project.bannerImage}`
+    : projectImagesData[project?.id]?.src || projectBannersData[parseInt(id as any)]?.src || projectBG.src;
 
   useEffect(() => {
       if (typeof window === "undefined") return;
   
       const handleScroll = () => {
         const header = document.getElementById("header") as HTMLElement | null;
-        const section1 = document.getElementById("section1") as HTMLElement | null;
+        if (!header) return;
   
-        if (!header || !section1) return;
-  
-        const section1Bottom = section1.offsetTop + section1.offsetHeight;
         const scrollY = window.scrollY || window.pageYOffset;
   
-        if (scrollY >= section1Bottom) {
+        if (scrollY > 0) {
           header.classList.add("solid");
           header.classList.remove("transparent");
         } else {
@@ -136,6 +134,7 @@ const ProjetoPage = () => {
       };
   
       window.addEventListener("scroll", handleScroll);
+      handleScroll();
       return () => window.removeEventListener("scroll", handleScroll); // Cleanup
     }, []);
     
@@ -203,12 +202,10 @@ const ProjetoPage = () => {
     </header>
 
     <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }} id="section1">
-      {project?.bannerImage && (
-        <>
           <img
             className="projetoBanner"
-            src={bannerImageUrl}
-            alt="Projeto Banner"
+            src={projectImageUrl}
+            alt={project.title}
             style={{
               position: 'absolute',
               top: 0,
@@ -219,21 +216,26 @@ const ProjetoPage = () => {
               zIndex: 0
             }}
           />
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0, 0, 0, 0.35)',
+              zIndex: 1
+            }}
+          />
           {/* Conteúdo sobreposto */}
-          <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%', color: '#fff', width: "80%", margin: "0 auto", padding: "0 20px" }}>
-            <p className="projectTitle">
-              INSTITUTO NOBIS <br />
-              <a style={{ fontWeight: '300', fontSize: "68px" }}>& CROWDFUNDING</a> <br />
-              IMPACTO DE A-Z <br />
-            </p>
+          <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', height: '100%', color: '#fff', width: "80%", margin: "0 auto", padding: "0 20px" }}>
+            <p className="projectTitle">{project.title}</p>
             <div className="projectTags">
               {project?.tags?.map((tag: any) => (
                 <button key={tag.id} className="initBtn">{tag.content}</button>
               ))}
             </div>
           </div>
-        </>
-      )}
     </div>
 
       {project && (
@@ -268,7 +270,7 @@ const ProjetoPage = () => {
                     </div>
                   </div>
                 </div>
-                <img src={project?.bannerImage ? `https://dev.nobisapp.com.br/institute/uploads/${project.bannerImage}` : projectImagesData[project.id]?.src || projectBG.src} className="projectImg" />
+                <img src={projectImageUrl} className="projectImg" />
               </div>
             </div>
           </div>

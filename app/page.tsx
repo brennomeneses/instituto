@@ -64,14 +64,11 @@ export default function HomePage() {
 
     const handleScroll = () => {
       const header = document.getElementById("header") as HTMLElement | null;
-      const section1 = document.getElementById("section1") as HTMLElement | null;
+      if (!header) return;
 
-      if (!header || !section1) return;
-
-      const section1Bottom = section1.offsetTop + section1.offsetHeight;
       const scrollY = window.scrollY || window.pageYOffset;
 
-      if (scrollY >= section1Bottom) {
+      if (scrollY > 0) {
         header.classList.add("solid");
         header.classList.remove("transparent");
       } else {
@@ -81,6 +78,7 @@ export default function HomePage() {
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll); // Cleanup
   }, []);
   
