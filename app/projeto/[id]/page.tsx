@@ -90,6 +90,8 @@ const ProjetoPage = () => {
     };
 
   const DonationProgressBar = ({ doacaoAtual, meta }: { doacaoAtual: number, meta: number }) => {
+    if (meta <= 0) return null;
+
     const percent = (doacaoAtual / meta) * 100;
   
     return (
@@ -171,6 +173,9 @@ const ProjetoPage = () => {
         <Spin indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />} />
       </div>
     );
+
+  const hasMinimumInvestment = Number(project.minInvestment) > 0;
+  const hasMeta = Number(project.meta) > 0;
   
 
   return (
@@ -287,8 +292,12 @@ const ProjetoPage = () => {
                   <span><a>Público-Alvo:</a> <br/><br/> {project.target}</span>
                 </div>
                 <div>
-                <span><a>Investimento Mínimo:</a> <br/><br/> R$ {project.minInvestment}</span>
-                  <br/><br/><br/>
+                  {hasMinimumInvestment && (
+                    <>
+                      <span><a>Investimento Mínimo:</a> <br/><br/> R$ {project.minInvestment}</span>
+                      <br/><br/><br/>
+                    </>
+                  )}
                   <span><a>Objetivos:</a> <br/><br/> {project.focus}</span>
                 </div>
               </div>
@@ -296,19 +305,21 @@ const ProjetoPage = () => {
           </div>
           </FadeInSection>
           
-          <FadeInSection>
-          <div className="meta">
-            <div className="content">
-              <div className="metaInfo">
-                <h1 className="projetoSectionTitle">Meta</h1>
-                <div className="progress-bar">
-                  <div className="progress" style={{ width: `${(project.donatesSum / project.meta) * 100}%` }} />
+          {hasMeta && (
+            <FadeInSection>
+            <div className="meta">
+              <div className="content">
+                <div className="metaInfo">
+                  <h1 className="projetoSectionTitle">Meta</h1>
+                  <div className="progress-bar">
+                    <div className="progress" style={{ width: `${(project.donatesSum / project.meta) * 100}%` }} />
+                  </div>
+                  <DonationProgressBar doacaoAtual={project?.doacaoAtual || 0} meta={project?.meta} />
                 </div>
-                <DonationProgressBar doacaoAtual={project?.doacaoAtual || 0} meta={project?.meta || 1000} />
               </div>
             </div>
-          </div>
-          </FadeInSection>
+            </FadeInSection>
+          )}
         </>
       )}
       <div className="footer">
