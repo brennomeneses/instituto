@@ -254,15 +254,18 @@ export default function HomePage() {
               imgL: valoresL.src,
               title: "Nossos valores",
               text: (
-                <ul>
-                  <li>Tecnologia no Meio, Pessoas no Centro</li>
+                <>
+                  Tecnologia no Meio, Pessoas no Centro.
                   <br />
-                  <li>Ser exponencial para escalar transformações que importam no mundo.</li>
                   <br />
-                  <li>Impacto é escalável quando as redes são infinitas</li>
+                  Ser exponencial para escalar transformações que importam no mundo.
                   <br />
-                  <li>Presença global, desenvolvimento local.</li>
-                </ul>
+                  <br />
+                  Impacto é escalável quando as redes são infinitas
+                  <br />
+                  <br />
+                  Presença global, desenvolvimento local.
+                </>
               ),
             },
           ].map(({ key, imgD, imgL, title, text }) => (

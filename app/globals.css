@@ -922,6 +922,277 @@ body {
   background-position: -100% 0;
 }
 
+@media screen and (min-width: 769px) and (max-width: 1720px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .floating-header {
+    width: 86%;
+  }
+
+  .floating-header.solid,
+  .floating-header.solidWhite {
+    padding: 12px 5%;
+  }
+
+  .container-header {
+    width: 100%;
+    gap: 24px;
+  }
+
+  .logo-header {
+    flex: 0 0 90px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .floating-header .logo-header img {
+    height: 70px !important;
+  }
+
+  .navInfo {
+    flex: 1;
+    justify-content: flex-end;
+    align-items: center;
+    gap: clamp(22px, 4vw, 60px);
+    min-width: 0;
+  }
+
+  .floating-header nav ul {
+    margin: 0 !important;
+    padding: 0;
+    gap: clamp(20px, 3vw, 48px);
+  }
+
+  .floating-header nav ul li {
+    margin-left: 0 !important;
+  }
+
+  .floating-header nav ul li a,
+  .button-header {
+    white-space: nowrap;
+  }
+
+  .button-header {
+    margin-left: 0;
+    font-size: 18px;
+  }
+
+  .content {
+    width: min(86%, 1120px);
+  }
+
+  .title {
+    padding-top: 64px;
+  }
+
+  .title h1 {
+    font-size: clamp(34px, 3.1vw, 45px);
+    line-height: 1.14;
+  }
+
+  .nossosProjetos,
+  .sobreNobis,
+  .playlist,
+  .mvv,
+  .sobre,
+  .equipe,
+  .projectInfo,
+  .sobreProjeto,
+  .meta,
+  .projects,
+  .projects-cards,
+  .transparenciaDocumentos,
+  .footer {
+    height: auto;
+    min-height: 0;
+  }
+
+  .nossosProjetos,
+  .sobreNobis,
+  .playlist,
+  .mvv,
+  .sobre,
+  .equipe,
+  .projectInfo,
+  .sobreProjeto,
+  .projects-cards,
+  .transparenciaDocumentos {
+    padding-bottom: 72px;
+  }
+
+  .slider-container {
+    gap: 24px;
+    padding: 28px 0 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .slider-container > .slider-container {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .card {
+    flex: 0 0 auto;
+    width: clamp(260px, 24vw, 360px) !important;
+    height: clamp(390px, 37vw, 540px) !important;
+    margin: 0;
+  }
+
+  .card-title {
+    font-size: 20px;
+  }
+
+  .cardsProjetos {
+    flex-wrap: wrap;
+    gap: 28px;
+  }
+
+  .projects {
+    padding-top: 96px;
+  }
+
+  .projects-cards {
+    padding-top: 40px;
+  }
+
+  .filterTags {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 0;
+  }
+
+  .filter-tag {
+    margin: 0;
+  }
+
+  .mvvContainer {
+    align-items: stretch;
+    gap: 22px;
+  }
+
+  .mvvCard,
+  .meio {
+    width: min(31%, 360px);
+    height: auto;
+    min-height: 560px;
+    margin: 0;
+    padding: 32px 28px;
+  }
+
+  .mvvCard:hover {
+    transform: none;
+  }
+
+  .sectionContent {
+    gap: 48px;
+  }
+
+  .sectionContent img {
+    height: auto;
+    max-height: 620px;
+    max-width: 42%;
+  }
+
+  .text {
+    width: 52%;
+    margin-right: 0;
+  }
+
+  .description {
+    max-width: 100%;
+  }
+
+  .equipe {
+    padding: 72px 0;
+  }
+
+  .equipe .carousel {
+    margin-right: 0;
+  }
+
+  .projectImg {
+    width: min(42vw, 500px);
+  }
+
+  .projetoInfo {
+    height: auto;
+    min-height: 420px;
+  }
+
+  .documentos {
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 0 5%;
+  }
+
+  .documentCard {
+    width: min(30vw, 390px);
+  }
+
+  .footer {
+    padding: 48px 7%;
+  }
+
+  .footerContent {
+    gap: 40px;
+  }
+
+  .footerInfo {
+    min-width: 0;
+  }
+
+  .footerInfo div {
+    min-width: min(200px, 100%);
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1180px) {
+  .floating-header {
+    width: 92%;
+  }
+
+  .navInfo,
+  .floating-header nav ul {
+    gap: 18px;
+  }
+
+  .navInfo,
+  .button-header {
+    font-size: 16px;
+  }
+
+  .button-header {
+    padding: 7px 16px;
+  }
+
+  .mvvContainer,
+  .sectionContent,
+  .footerContent {
+    flex-wrap: wrap;
+  }
+
+  .mvvCard,
+  .meio {
+    width: 100%;
+    min-height: 0;
+  }
+
+  .text {
+    width: 100%;
+  }
+
+  .sectionContent img {
+    max-width: 420px;
+  }
+
+  .documentCard {
+    width: min(420px, 90vw);
+  }
+}
+
 @media screen and (max-width: 768px) {
   .logo-header img {
     display: none;
