@@ -89,3 +89,73 @@ export async function createMercadoPagoOrder({
 
   return data;
 }
+
+
+export interface MercadoPagoOrderDetails {
+  id: string;
+  external_reference: string;
+  total_amount: string;
+  total_paid_amount: string;
+  status: string;
+  status_detail: string;
+}
+
+export async function getMercadoPagoOrder(
+  orderId: string
+): Promise<MercadoPagoOrderDetails> {
+  const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+
+  if (!accessToken) {
+    throw new Error(
+      "Credenciais do Mercado Pago não configuradas."
+    );
+  }
+
+  if (
+    !/^ORD[A-Z0-9]+$/.test(orderId) ||
+    orderId.length > 100
+  ) {
+    throw new Error("Identificador do pedido inválido.");
+  }
+
+  const response = await fetch(
+    `https://api.mercadopago.com/v1/orders/${encodeURIComponent(orderId)}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Falha ao consultar pedido no Mercado Pago (${response.status}).`
+    );
+  }
+
+  const order: unknown = await response.json();
+
+  if (
+    !order ||
+    typeof order !== "object" ||
+    !("id" in order) ||
+    order.id !== orderId ||
+    !("external_reference" in order) ||
+    typeof order.external_reference !== "string" ||
+    !("total_amount" in order) ||
+    typeof order.total_amount !== "string" ||
+    !("total_paid_amount" in order) ||
+    typeof order.total_paid_amount !== "string" ||
+    !("status" in order) ||
+    typeof order.status !== "string" ||
+    !("status_detail" in order) ||
+    typeof order.status_detail !== "string"
+  ) {
+    throw new Error("Resposta inválida do Mercado Pago.");
+  }
+
+  return order as MercadoPagoOrderDetails;
+}
