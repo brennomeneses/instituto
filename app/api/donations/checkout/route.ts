@@ -1,6 +1,11 @@
+
 import { NextRequest, NextResponse } from "next/server";
 import { projects } from "../../../data/projects";
-import db from "../../../../lib/db";
+import {
+  createPendingDonation,
+  attachMercadoPagoOrder,
+} from "../../../../lib/donations";
+import { createMercadoPagoOrder } from "../../../../lib/mercadopago";
 
 export const runtime = "nodejs";
 
@@ -11,18 +16,31 @@ interface DonationRequest {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: DonationRequest = await request.json();
+    // Mantém o checkout desativado até concluirmos os testes.
+    if (
+      process.env.DONATIONS_CHECKOUT_ENABLED !== "true" ||
+      !process.env.MERCADOPAGO_ACCESS_TOKEN
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Checkout ainda não configurado. Aguardando integração com Mercado Pago.",
+        },
+        { status: 503 }
+      );
+    }
 
+    const body: DonationRequest = await request.json();
     const { amount, projectId } = body;
 
-    // Validar o valor da doação
+    // Validar o valor da doação.
     if (
       typeof amount !== "number" ||
       !Number.isFinite(amount) ||
       amount < 1 ||
       amount > 100000 ||
-      !Number.isInteger(Math.round(amount * 100)) ||
-      Math.abs(amount * 100 - Math.round(amount * 100)) > 0.000001
+      Math.abs(amount * 100 - Math.round(amount * 100)) >
+        0.000001
     ) {
       return NextResponse.json(
         { error: "Valor de doação inválido." },
@@ -30,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Identificar o projeto beneficiado
+    // Validar o projeto.
     if (
       projectId !== null &&
       (!Number.isInteger(projectId) || projectId <= 0)
@@ -52,27 +70,36 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
-// TESTE TEMPORÁRIO:
-// Verificar conexão e autenticação com o MySQL.
-await db.query("SELECT 1");
 
-console.info("Conexão com MySQL validada.");
+    // Converter reais para centavos.
+    const amountCents = Math.round(amount * 100);
 
-// Na próxima etapa, implementaremos
-// o registro das doações e o Checkout Pro.
+    // Registrar a doação pendente no MySQL.
+    const donationId = await createPendingDonation({
+      projectId,
+      amountCents,
+    });
 
-    return NextResponse.json(
-      {
-        error:
-          "Checkout ainda não configurado. Aguardando integração com Mercado Pago.",
-      },
-      { status: 503 }
-    );
+    // Criar a order no Mercado Pago.
+    const order = await createMercadoPagoOrder({
+      donationId,
+      amountCents,
+      projectName: project?.title,
+    });
+
+    // Vincular a order ao registro da doação.
+    await attachMercadoPagoOrder(donationId, order.id);
+
+    // Retornar a URL para o frontend.
+    return NextResponse.json({
+      donationId,
+      checkoutUrl: order.checkout_url,
+    });
   } catch (error) {
-   console.error(
-  "Falha ao processar checkout:",
-  error instanceof Error ? error.message : "Erro desconhecido"
-);
+    console.error(
+      "Falha ao processar checkout:",
+      error instanceof Error ? error.message : "Erro desconhecido"
+    );
 
     return NextResponse.json(
       { error: "Não foi possível processar a solicitação." },

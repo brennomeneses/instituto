@@ -65,11 +65,15 @@ export default function DonationModal({
         );
       }
 
+      if (typeof data.checkoutUrl !== "string") {
+        throw new Error("URL de pagamento inválida.");
+      }
+
+      const checkoutUrl = new URL(data.checkoutUrl);
+
       if (
-        typeof data.checkoutUrl !== "string" ||
-        !data.checkoutUrl.startsWith(
-          "https://www.mercadopago.com.br/"
-        )
+        checkoutUrl.protocol !== "https:" ||
+        checkoutUrl.hostname !== "www.mercadopago.com.br"
       ) {
         throw new Error("URL de pagamento inválida.");
       }
