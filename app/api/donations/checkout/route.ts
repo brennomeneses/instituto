@@ -1,6 +1,8 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { projects } from "../../../data/projects";
+import db from "../../../../lib/db";
+
+export const runtime = "nodejs";
 
 interface DonationRequest {
   amount: number;
@@ -50,10 +52,14 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+// TESTE TEMPORÁRIO:
+// Verificar conexão e autenticação com o MySQL.
+await db.query("SELECT 1");
 
-    // Aqui será integrada a criação da cobrança
-    // no Mercado Pago, após configurarmos
-    // as credenciais e a persistência das doações.
+console.info("Conexão com MySQL validada.");
+
+// Na próxima etapa, implementaremos
+// o registro das doações e o Checkout Pro.
 
     return NextResponse.json(
       {
@@ -63,7 +69,10 @@ export async function POST(request: NextRequest) {
       { status: 503 }
     );
   } catch (error) {
-    console.error("Erro na API de doações:", error);
+   console.error(
+  "Falha ao processar checkout:",
+  error instanceof Error ? error.message : "Erro desconhecido"
+);
 
     return NextResponse.json(
       { error: "Não foi possível processar a solicitação." },
