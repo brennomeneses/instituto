@@ -36,6 +36,8 @@ const ProjetoPage = () => {
   );
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [totalArrecadado, setTotalArrecadado] = useState<number | null>(null);
+  const [erroArrecadacao, setErroArrecadacao] = useState(false);
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
 
@@ -73,10 +75,25 @@ const ProjetoPage = () => {
     );
   };
 
-  const DonationProgressBar = ({ doacaoAtual, meta }: { doacaoAtual: number, meta: number }) => {
+  const DonationProgressBar = ({
+    doacaoAtual,
+    meta,
+  }: {
+    doacaoAtual: number | null;
+    meta: number;
+  }) => {
     if (meta <= 0) return null;
 
-    const percent = (doacaoAtual / meta) * 100;
+    const percent = Math.min(
+      100,
+      Math.max(0, ((doacaoAtual ?? 0) / meta) * 100)
+    );
+
+    const formatCurrency = (value: number) =>
+      new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(value);
 
     return (
       <div style={{ margin: '50px 0' }}>
@@ -88,7 +105,15 @@ const ProjetoPage = () => {
           size={["80vw", 65]}
         />
         <div style={{ marginTop: '10px', textAlign: "center" }}>
-          <span style={{ fontSize: "35px" }}><a style={{ fontWeight: "600" }}>R${doacaoAtual.toFixed(0)}</a> de R${meta.toFixed(0)}</span>
+          <span style={{ fontSize: "35px" }}>
+            <a style={{ fontWeight: 600 }}>
+              {doacaoAtual === null
+                ? "Arrecadação indisponível"
+                : formatCurrency(doacaoAtual)}
+            </a>
+
+            {" "}de {formatCurrency(meta)}
+          </span>
           <br />
           <button className="btnDoacao" onClick={openModal}>Faça uma doação</button>
           <DonationModal
@@ -101,6 +126,51 @@ const ProjetoPage = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    if (!project?.id) return;
+
+    const controller = new AbortController();
+
+    const carregarArrecadacao = async () => {
+      try {
+        setErroArrecadacao(false);
+        setTotalArrecadado(null);
+
+        const response = await fetch(
+          `/api/donations/total?projectId=${project.id}`,
+          {
+            cache: "no-store",
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Erro ao consultar arrecadação.");
+        }
+
+        const data = await response.json();
+
+        if (
+          !Number.isSafeInteger(data.totalCents) ||
+          data.totalCents < 0
+        ) {
+          throw new Error("Valor de arrecadação inválido.");
+        }
+
+        setTotalArrecadado(data.totalCents / 100);
+      } catch (error) {
+        if (controller.signal.aborted) return;
+
+        console.error("Erro ao carregar arrecadação:", error);
+        setErroArrecadacao(true);
+      }
+    };
+
+    carregarArrecadacao();
+
+    return () => controller.abort();
+  }, [project?.id]);
 
   const projectImageUrl =
     project?.bannerImage?.src || projectBG.src;
@@ -281,10 +351,16 @@ const ProjetoPage = () => {
                 <div className="content">
                   <div className="metaInfo">
                     <h1 className="projetoSectionTitle">Meta</h1>
-                    <div className="progress-bar">
-                      <div className="progress" style={{ width: `${(project.donatesSum / project.meta) * 100}%` }} />
-                    </div>
-                    <DonationProgressBar doacaoAtual={project?.doacaoAtual || 0} meta={project?.meta} />
+                    {erroArrecadacao && (
+  <p style={{ textAlign: "center", color: "#b91c1c" }}>
+    Não foi possível carregar a arrecadação.
+  </p>
+)}
+
+<DonationProgressBar
+  doacaoAtual={totalArrecadado}
+  meta={Number(project.meta)}
+/>
                   </div>
                 </div>
               </div>

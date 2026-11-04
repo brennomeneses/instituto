@@ -26,6 +26,8 @@ import TeamCarousel from '../app/components/team';
 import { motion } from "framer-motion";
 import { projects } from "./data/projects";
 import ProjectCarousel from "./components/projectCarousel";
+import GeneralDonationSection from "./components/generalDonationSection";
+
 
 const contentStyle: CSSProperties = {
   height: '100vh',
@@ -297,6 +299,7 @@ export default function HomePage() {
           </div>
         </FadeInSection>
       </div>
+      <GeneralDonationSection />
       <div className="equipe">
         <FadeInSection>
           <div className="content">
@@ -344,7 +347,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </div> */}
+    </div> */}  
       <div className="footer">
         <div className="content">
           <div className="footerContent">
