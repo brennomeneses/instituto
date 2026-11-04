@@ -211,7 +211,7 @@ export const projects: Project[] = [
 
     duration: "12 meses",
 
-    minInvestment: 50,
+    minInvestment: 1,
     meta: 1000,
     doacaoAtual: 0,
     donatesSum: 0,
