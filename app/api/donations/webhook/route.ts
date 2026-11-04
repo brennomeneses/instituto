@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     WebhookSignatureValidator.validate({
       xSignature,
       xRequestId,
-      dataId,
+      dataId: dataId.toLowerCase(),
       secret,
     });
   } catch (error) {
