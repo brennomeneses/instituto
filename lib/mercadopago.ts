@@ -1,4 +1,3 @@
-
 import "server-only";
 
 interface CreateOrderInput {
@@ -27,7 +26,8 @@ export async function createMercadoPagoOrder({
 
   if (
     !Number.isSafeInteger(amountCents) ||
-    amountCents < 100
+    amountCents < 100 ||
+    amountCents > 10_000_000
   ) {
     throw new Error("Valor inválido.");
   }
@@ -72,32 +72,46 @@ export async function createMercadoPagoOrder({
     );
   }
 
-  const data =
-    (await response.json()) as MercadoPagoOrderResponse;
+  const data: unknown = await response.json();
 
   if (
-    !data.id ||
-    !data.checkout_url ||
-    !data.checkout_url.startsWith(
-      "https://www.mercadopago.com.br/"
-    )
+    !data ||
+    typeof data !== "object" ||
+    !("id" in data) ||
+    typeof data.id !== "string" ||
+    !("checkout_url" in data) ||
+    typeof data.checkout_url !== "string"
   ) {
     throw new Error(
       "Resposta inválida do Mercado Pago."
     );
   }
 
-  return data;
+  const checkoutUrl = new URL(data.checkout_url);
+
+  if (
+    checkoutUrl.protocol !== "https:" ||
+    checkoutUrl.hostname !== "www.mercadopago.com.br"
+  ) {
+    throw new Error(
+      "URL de checkout inválida."
+    );
+  }
+
+  return {
+    id: data.id,
+    checkout_url: data.checkout_url,
+  };
 }
 
-
+// Dados retornados pela consulta autenticada à Orders API.
 export interface MercadoPagoOrderDetails {
   id: string;
   external_reference: string;
   total_amount: string;
-  total_paid_amount: string;
+  total_paid_amount?: string;
   status: string;
-  status_detail: string;
+  status_detail?: string;
 }
 
 export async function getMercadoPagoOrder(
@@ -115,7 +129,9 @@ export async function getMercadoPagoOrder(
     !/^ORD[A-Z0-9]+$/.test(orderId) ||
     orderId.length > 100
   ) {
-    throw new Error("Identificador do pedido inválido.");
+    throw new Error(
+      "Identificador do pedido inválido."
+    );
   }
 
   const response = await fetch(
@@ -138,6 +154,7 @@ export async function getMercadoPagoOrder(
 
   const order: unknown = await response.json();
 
+  // Campos obrigatórios para identificar o pedido.
   if (
     !order ||
     typeof order !== "object" ||
@@ -147,14 +164,44 @@ export async function getMercadoPagoOrder(
     typeof order.external_reference !== "string" ||
     !("total_amount" in order) ||
     typeof order.total_amount !== "string" ||
-    !("total_paid_amount" in order) ||
-    typeof order.total_paid_amount !== "string" ||
     !("status" in order) ||
-    typeof order.status !== "string" ||
-    !("status_detail" in order) ||
-    typeof order.status_detail !== "string"
+    typeof order.status !== "string"
+  ) {
+    throw new Error(
+      "Resposta inválida do Mercado Pago."
+    );
+  }
+
+  const validatedOrder = order as {
+    id: string;
+    external_reference: string;
+    total_amount: string;
+    total_paid_amount?: unknown;
+    status: string;
+    status_detail?: unknown;
+  };
+
+  // Alguns campos podem não existir enquanto
+  // o pagamento ainda não foi processado.
+  // Validar os campos opcionais quando estiverem presentes.
+  if (
+    (validatedOrder.total_paid_amount !== undefined &&
+      typeof validatedOrder.total_paid_amount !== "string") ||
+    (validatedOrder.status_detail !== undefined &&
+      typeof validatedOrder.status_detail !== "string")
   ) {
     throw new Error("Resposta inválida do Mercado Pago.");
+  }
+
+  // Pagamentos aprovados precisam ter os dados completos.
+  if (
+    validatedOrder.status === "processed" &&
+    validatedOrder.status_detail === "accredited" &&
+    typeof validatedOrder.total_paid_amount !== "string"
+  ) {
+    throw new Error(
+      "Dados do pagamento aprovado incompletos."
+    );
   }
 
   return order as MercadoPagoOrderDetails;

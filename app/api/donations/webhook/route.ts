@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import {
   WebhookSignatureValidator,
   InvalidWebhookSignatureError,
 } from "mercadopago";
 
-import { getMercadoPagoOrder } from "../../../../lib/mercadopago";
-import { confirmPaidDonation } from "../../../../lib/donations";
+import {
+  getMercadoPagoOrder,
+} from "../../../../lib/mercadopago";
+
+import {
+  confirmPaidDonation,
+} from "../../../../lib/donations";
 
 export const runtime = "nodejs";
 
@@ -23,6 +29,7 @@ export async function POST(request: NextRequest) {
   const xRequestId = request.headers.get("x-request-id");
 
   const url = new URL(request.url);
+
   const dataId = url.searchParams.get("data.id");
   const type = url.searchParams.get("type");
 
@@ -38,8 +45,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Validar a assinatura antes de consultar
-  // qualquer informação ou alterar o banco.
+  // Validar a assinatura antes de consultar o
+  // Mercado Pago ou alterar qualquer registro.
   try {
     WebhookSignatureValidator.validate({
       xSignature,
@@ -55,7 +62,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error("Erro ao validar assinatura:", error);
+    console.error(
+      "Erro ao validar assinatura:",
+      error
+    );
 
     return NextResponse.json(
       { error: "Erro interno." },
@@ -64,34 +74,60 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Consultar os dados oficiais da order.
+    // Buscar os dados diretamente na API autenticada.
     const order = await getMercadoPagoOrder(dataId);
 
-    // Somente pedidos aprovados e creditados
-    // podem confirmar uma doação.
+    // Confirmar apenas pagamentos aprovados,
+    // creditados e com valor pago disponível.
     if (
       order.status === "processed" &&
-      order.status_detail === "accredited"
+      order.status_detail === "accredited" &&
+      typeof order.total_paid_amount === "string"
     ) {
-      const updated = await confirmPaidDonation(order);
+      const updated = await confirmPaidDonation({
+        id: order.id,
+        external_reference: order.external_reference,
+        total_amount: order.total_amount,
+        total_paid_amount: order.total_paid_amount,
+        status: order.status,
+        status_detail: order.status_detail,
+      });
 
       console.info(
         "Notificação de pagamento processada:",
-        { orderId: order.id, updated }
+        {
+          orderId: order.id,
+          updated,
+        }
+      );
+    } else {
+      console.info(
+        "Notificação recebida sem pagamento confirmado:",
+        {
+          orderId: order.id,
+          status: order.status,
+          statusDetail: order.status_detail,
+        }
       );
     }
 
-    return NextResponse.json({ received: true });
+    return NextResponse.json({
+      received: true,
+    });
   } catch (error) {
     console.error(
       "Erro ao processar webhook:",
-      error instanceof Error ? error.message : "Erro desconhecido"
+      error instanceof Error
+        ? error.message
+        : "Erro desconhecido"
     );
 
-    // Solicita uma nova tentativa de entrega
+    // Permitir uma nova tentativa de entrega
     // quando o processamento falhar.
     return NextResponse.json(
-      { error: "Falha ao processar notificação." },
+      {
+        error: "Falha ao processar notificação.",
+      },
       { status: 503 }
     );
   }
