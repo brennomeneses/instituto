@@ -14,10 +14,13 @@
     "antd": "^5.23.3",
     "framer-motion": "^12.4.2",
     "lucide-react": "^0.474.0",
+    "mercadopago": "^3.6.1",
+    "mysql2": "^3.24.6",
     "next": "^15.1.11",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "react-slick": "^0.30.3"
+    "react-slick": "^0.30.3",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

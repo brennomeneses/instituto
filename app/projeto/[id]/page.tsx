@@ -3,7 +3,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Popover, Progress } from "antd";
 import Link from "next/link";
-import 'antd/dist/reset.css';
 import img from '../../img/logos/nobis_principal_branca.png';
 import imgFooter from '../../img/logos/nobis_roxo.png';
 import { useParams } from "next/navigation";
@@ -92,7 +91,12 @@ const ProjetoPage = () => {
           <span style={{ fontSize: "35px" }}><a style={{ fontWeight: "600" }}>R${doacaoAtual.toFixed(0)}</a> de R${meta.toFixed(0)}</span>
           <br />
           <button className="btnDoacao" onClick={openModal}>Faça uma doação</button>
-          <DonationModal visible={isModalVisible} onClose={closeModal} />
+          <DonationModal
+            visible={isModalVisible}
+            onClose={closeModal}
+            projectId={project?.id}
+            projectName={project?.title}
+          />
         </div>
       </div>
     );

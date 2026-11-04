@@ -1,126 +1,207 @@
+
+"use client";
+
 import { useState } from "react";
-import { Modal, Input, Select, Button, Form, Divider } from "antd";
+import {
+  Modal,
+  InputNumber,
+  Button,
+  Typography,
+  message,
+} from "antd";
+
+const { Title, Text } = Typography;
 
 interface DonationModalProps {
   visible: boolean;
   onClose: () => void;
+  projectId?: number;
+  projectName?: string;
 }
 
-const DonationModal: React.FC<DonationModalProps> = ({ visible, onClose }) => {
-  const [form] = Form.useForm();
-  const [method, setMethod] = useState<"pix" | "cartao">("pix");
-  const [documentType, setDocumentType] = useState<"cpf" | "cnpj">("cpf");
+const suggestedAmounts = [20, 50, 100, 200];
 
-  const handleSubmit = (values: any) => {
-    console.log("Doação enviada:", values);
-    onClose();
+export default function DonationModal({
+  visible,
+  onClose,
+  projectId,
+  projectName,
+}: DonationModalProps) {
+  const [amount, setAmount] = useState<number>(50);
+  const [loading, setLoading] = useState(false);
+
+  const handleDonate = async () => {
+    if (
+      !Number.isFinite(amount) ||
+      amount < 1 ||
+      amount > 100000
+    ) {
+      message.error("Informe um valor válido.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "/api/donations/checkout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount,
+            projectId: projectId ?? null,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Erro ao iniciar pagamento."
+        );
+      }
+
+      if (typeof data.checkoutUrl !== "string") {
+        throw new Error("URL de pagamento inválida.");
+      }
+
+      const checkoutUrl = new URL(data.checkoutUrl);
+
+      if (
+        checkoutUrl.protocol !== "https:" ||
+        checkoutUrl.hostname !== "www.mercadopago.com.br"
+      ) {
+        throw new Error("URL de pagamento inválida.");
+      }
+
+      window.location.assign(data.checkoutUrl);
+    } catch (error) {
+      console.warn("Checkout indisponível:", error);
+
+      message.error(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível iniciar o pagamento."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Modal
-      title="Faça uma Doação"
-      open={visible}  // Aqui, o Ant Design 4 usa "open" em vez de "visible"
+      title="Faça uma doação"
+      open={visible}
       onCancel={onClose}
       footer={null}
+      centered
+      destroyOnClose
     >
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <Form.Item
-          label="Valor da Doação"
-          name="valor"
-          rules={[{ required: true, message: "Informe o valor da doação" }]}
+      <div className="flex flex-col gap-5 py-4">
+        <div className="text-center">
+          <Title level={4}>
+            Apoie essa transformação 💜
+          </Title>
+
+          <Text type="secondary">
+            {projectName
+              ? `Você está apoiando: ${projectName}`
+              : "Sua contribuição apoia o Instituto Nobis."}
+          </Text>
+        </div>
+
+        <div>
+          <Text strong>
+            Escolha o valor da doação
+          </Text>
+
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            {suggestedAmounts.map((value) => (
+              <Button
+                key={value}
+                size="large"
+                type={
+                  amount === value
+                    ? "primary"
+                    : "default"
+                }
+                onClick={() => setAmount(value)}
+                style={
+                  amount === value
+                    ? { backgroundColor: "#631299" }
+                    : {}
+                }
+              >
+                R$ {value}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <Text strong>
+            Ou digite outro valor
+          </Text>
+
+          <InputNumber
+            min={1}
+            max={100000}
+            precision={2}
+            value={amount}
+            onChange={(value) =>
+              setAmount(value ?? 0)
+            }
+            prefix="R$"
+            size="large"
+            style={{
+              width: "100%",
+              marginTop: 10,
+            }}
+          />
+        </div>
+
+        <div className="rounded-lg bg-gray-50 p-4">
+          <Text strong>
+            Pagamento seguro
+          </Text>
+
+          <p className="mt-2 text-sm text-gray-600">
+            Você poderá escolher Pix, cartão
+            de crédito ou outras formas
+            disponíveis no Mercado Pago.
+          </p>
+        </div>
+
+        <Button
+          type="primary"
+          size="large"
+          block
+          loading={loading}
+          onClick={handleDonate}
+          style={{
+            backgroundColor: "#631299",
+            height: 48,
+            fontWeight: 600,
+          }}
         >
-          <Input type="number" prefix="R$" min={1} />
-        </Form.Item>
+          Continuar para pagamento
+        </Button>
 
-        <Form.Item label="Método de Pagamento" name="metodo" initialValue={method}>
-          <Select onChange={(value) => setMethod(value as "pix" | "cartao")}>
-            <Select.Option value="pix">PIX</Select.Option>
-            <Select.Option value="cartao">Cartão de Crédito</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item label="Documento" name="documento" initialValue={documentType}>
-          <Select onChange={(value) => setDocumentType(value as "cpf" | "cnpj")}>
-            <Select.Option value="cpf">CPF</Select.Option>
-            <Select.Option value="cnpj">CNPJ</Select.Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item
-          label={documentType === "cpf" ? "Número do CPF" : "Número do CNPJ"}
-          name="numeroDocumento"
-          rules={[{ required: true, message: "Informe seu documento" }]}
+        <Text
+          type="secondary"
+          style={{
+            textAlign: "center",
+            fontSize: 12,
+          }}
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Nome Completo" name="nome" rules={[{ required: true }]}> 
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Email" name="email" rules={[{ required: true, type: "email" }]}> 
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Celular" name="celular" rules={[{ required: true }]}> 
-          <Input />
-        </Form.Item>
-
-        {method === "cartao" && (
-          <>
-            <h1 style={{ fontSize: "18px" }}>Dados do Cartão</h1>
-            <Divider />
-
-            <Form.Item label="Número do Cartão" name="numeroCartao" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="Nome Impresso no Cartão" name="nomeCartao" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="Mês Validade" name="mesValidade" rules={[{ required: true }]}> 
-              <Input maxLength={2} />
-            </Form.Item>
-
-            <Form.Item label="Ano Validade" name="anoValidade" rules={[{ required: true }]}> 
-              <Input maxLength={4} />
-            </Form.Item>
-
-            <Form.Item label="CVV" name="cvv" rules={[{ required: true }]}> 
-              <Input maxLength={3} />
-            </Form.Item>
-
-            <h1 style={{ fontSize: "18px" }}>Endereço de Cobrança</h1>
-            <Divider />
-            <Form.Item label="CEP" name="cep" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="Endereço" name="endereco" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="Cidade" name="cidade" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="País" name="pais" rules={[{ required: true }]}> 
-              <Input />
-            </Form.Item>
-
-            <Form.Item label="UF" name="uf" rules={[{ required: true }]}> 
-              <Input maxLength={2} />
-            </Form.Item>
-          </>
-        )}
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Confirmar Doação</Button>
-        </Form.Item>
-      </Form>
+          O pagamento será realizado
+          no ambiente seguro do Mercado Pago.
+        </Text>
+      </div>
     </Modal>
   );
-};
-
-export default DonationModal;
+}
